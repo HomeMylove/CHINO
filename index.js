@@ -36,7 +36,7 @@ robot.method(plugins.control({ order: ['闭嘴', '说话'], reply: ['闭嘴啦',
 
 robot.method(plugins.quote) // 群语录
 
-robot.method(plugins.genshinWish, { permitted: ['302391473'] })
+robot.method(plugins.genshinWish)
 robot.method(plugins.genshinInfo, )
 
 robot.method(plugins.diceGame) // 骰子
