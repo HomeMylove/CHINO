@@ -26,3 +26,7 @@ module.exports = (req, res, next) => {
 
     next()
 }
+
+module.exports.__help = [
+    ['商店', '1.商店 | shop\n2.购买道具+序号\n3.我的道具+序号\n4.使用道具+序号']
+]

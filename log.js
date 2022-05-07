@@ -1,4 +1,4 @@
-const log4js = require('log4js'); //引入刚刚下载的log4js日志模板
+const log4js = require('log4js');
 
 
 log4js.configure({
@@ -22,4 +22,4 @@ log4js.configure({
 })
 
 
-module.exports = log4js.getLogger(); //暴露log4js模板，其他功能点才能应用
+module.exports = log4js.getLogger();

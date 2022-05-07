@@ -7,7 +7,7 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-module.exports = class Robot {
+class Robot {
     constructor() {
         this.app = app
         this.HELP = [] // 帮助列表
@@ -29,12 +29,17 @@ module.exports = class Robot {
             req['targetId'] = body['target_id']
             req['senderId'] = body['sender_id']
 
-            res['HELP'] = this.HELP
+            req['HELP'] = this.HELP
 
             res.send('ok') // 返回以阻止多次上报
 
+            if (!req['groupId']) {
+                return
+            }
 
-            next()
+            if (req['msgType'] || req['noticeType']) {
+                next()
+            }
         })
     }
 
@@ -59,24 +64,35 @@ module.exports = class Robot {
      * @param {Object} options 参数
      * @param {Array} options.permitted 允许通过
      * @param {Array} options.forbidden 禁止通过
-     * @param {Number} options.time 回复间隔
+     * @param {Number} options.time 一分钟回复次数
      */
     method(methodName, options) {
         options = options || {}
         const { permitted, forbidden } = options
-        this.app.use((req, res, next) => {
-            const { groupId } = req
-            if (forbidden && forbidden.indexOf(groupId) != -1) {
-                next()
-            } else if (permitted && permitted.indexOf(groupId) == -1) {
-                next()
-            } else {
-                methodName(req, res, next)
+
+        this.app.use(middle(options))
+
+        function middle(options) {
+            const { permitted, forbidden, time } = options
+            const inner = (req, res, next) => {
+                const { groupId } = req
+
+                if (forbidden && forbidden.indexOf(groupId.toString()) != -1) {
+                    next()
+                } else if (permitted && permitted.indexOf(groupId.toString()) == -1) {
+                    next()
+                } else {
+                    methodName(req, res, next)
+                }
             }
+            return inner
+        }
 
-        })
-
-        this.HELP.push(methodName.__help)
+        //写入帮助
+        if (methodName.__help) {
+            const h = { permitted, forbidden, description: methodName.__help }
+            this.HELP.push(h)
+        }
     }
 
     /**
@@ -89,3 +105,5 @@ module.exports = class Robot {
     }
 
 }
+
+module.exports = new Robot()

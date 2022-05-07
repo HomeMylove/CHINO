@@ -34,7 +34,7 @@ module.exports = (req, res) => {
         answer
     }
 
-    const sqlStr = 'SELECT * FROM echo WHERE user_id=? AND group_id=? AND question=?'
+    const sqlStr = 'SELECT question FROM echo WHERE user_id=? AND group_id=? AND question=?'
 
     db.query(sqlStr, [userId, groupId, question], (err, results) => {
         if (err) {
@@ -118,8 +118,6 @@ module.exports = (req, res) => {
                             })
                         }
                     })
-
-
 
                 }
 

@@ -13,25 +13,31 @@ const deleteEcho = require('./delete')
  */
 module.exports = async(req, res, next) => {
     const { rawMsg } = req
-    if (rawMsg.indexOf('echo') == 0) {
-        return echo(req, res)
-    } else if (rawMsg.indexOf('show') == 0) {
-        return show(req, res)
-    } else if (rawMsg.indexOf('update') == 0) {
-        return update(req, res)
-    } else if (rawMsg.indexOf('delete') == 0) {
-        return deleteEcho(req, res)
-    } else {
-        try {
-            const result = await answer(req, res)
-            if (!result) next()
-        } catch (error) {
-            console.log(error, 'echo')
+    try {
+        if (rawMsg.indexOf('echo') == 0) {
+            return echo(req, res)
+        } else if (rawMsg.indexOf('show') == 0) {
+            return show(req, res)
+        } else if (rawMsg.indexOf('update') == 0) {
+            return update(req, res)
+        } else if (rawMsg.indexOf('delete') == 0) {
+            return deleteEcho(req, res)
+        } else {
+            try {
+                const result = await answer(req, res)
+                if (!result) {
+                    next()
+                }
+            } catch (error) {
+                console.log(error, 'echo')
+            }
         }
+    } catch (error) {
+        console.log('echo', error);
     }
 }
 
 
 module.exports.__help = [
-    ['echo', 'echo 你是谁? 我是智乃。(请使用文明用语,构建和谐社会)\nupdate id=12 我是谁? 老公\nshow\ndelete id=12']
+    ['echo', 'echo 你是谁? 我是智乃。(请使用文明用语,构建和谐社会)\nupdate 12 我是谁? 老公\nshow\ndelete 12\n特殊名称:me']
 ]

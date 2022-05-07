@@ -43,3 +43,38 @@ module.exports.getRandomPaper2 = () => axios({ url: 'https://www.dmoe.cc/random.
  * @returns 
  */
 module.exports.getTGDiary = () => axios({ url: 'https://api.ixiaowai.cn/tgrj/index.php', method: 'get' })
+
+
+/**
+ * @function 返回随机回复
+ * @param {*} keyWord 
+ * @returns 
+ */
+module.exports.reqAutoChat = keyWord => axios({ url: `http://api.qingyunke.com/api.php?key=free&appid=0&msg=${keyWord}`, method: 'get' })
+
+/**
+ * @function 返回随机回复
+ * @param {*} msg 
+ * @param {*} id 
+ * @returns 
+ */
+module.exports.reqRuyiAi = (msg, id) => axios({
+    url: 'http://api.ruyi.ai/v1/message',
+    method: 'post',
+    data: {
+        "q": msg,
+        "app_key": "79ed362f-1b08-42c3-bb78-15b4195ee8c4",
+        "user_id": id
+    },
+    headers: {
+        'Content-Type': 'application/json'
+    },
+})
+
+
+/**
+ * @function 获取图片文件信息
+ * @param {*} file 
+ * @returns {size,filename,url}
+ */
+module.exports.getImage = file => axios({ url: `http://127.0.0.1:5700/get_image?file=${file}`, method: 'get' })

@@ -26,7 +26,6 @@ const reset = () => {
             // 将 签到状态 和 购买状态 重置
         const sqlStr4 = "UPDATE qq_robot SET data_json = JSON_SET(data_json, '$.checkInStatus',false,'$.goods.g1.status',false,'$.goods.g2.status',false,'$.goods.g3.status',false,'$.goods.g4.status',false)"
 
-
         new Promise((resove, reject) => {
             db.query(sqlStr1, [], (err, results) => {
                 if (err) return console.log('重置天数失败' + new Date(), err);

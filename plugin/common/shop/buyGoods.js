@@ -16,40 +16,48 @@ module.exports = (req, res) => {
 
     const { groupId, userId, rawMsg } = req
 
-    const goodsNum = rawMsg.replace('购买道具', '').trim()
+    const goodsNum = rawMsg.replace('购买道具', '').split(' ').filter(item => item)
 
-    let index
-    switch (goodsNum) {
-        case '意式浓缩':
-        case '1':
-        case '一':
-        case 'one':
-            index = 1
-            break;
-        case '拿铁咖啡':
-        case '2':
-        case '二':
-        case 'two':
-            index = 2
-            break;
-        case '摩卡咖啡':
-        case '3':
-        case '三':
-        case 'three':
-            index = 3
-            break;
-        case '卡布奇诺':
-        case '4':
-        case '四':
-        case 'four':
-            index = 4
-            break;
-        default:
-            index = 0
-            break;
-    }
+    const goodList = goodsNum.map(item => {
+        let index
+        switch (item) {
+            case '意式浓缩':
+            case '1':
+            case '一':
+            case 'one':
+                index = 1
+                break;
+            case '拿铁咖啡':
+            case '2':
+            case '二':
+            case 'two':
+                index = 2
+                break;
+            case '摩卡咖啡':
+            case '3':
+            case '三':
+            case 'three':
+                index = 3
+                break;
+            case '卡布奇诺':
+            case '4':
+            case '四':
+            case 'four':
+                index = 4
+                break;
+            default:
+                index = 0
+                break;
+        }
 
-    if (index) {
+        return {
+            index,
+            name: item
+        }
+    })
+
+
+    if (goodList) {
         const sqlStr = 'SELECT * FROM qq_robot WHERE group_id=? AND user_id=?'
         db.query(sqlStr, [groupId, userId], (err, results) => {
             if (err) {
@@ -76,44 +84,66 @@ module.exports = (req, res) => {
 
                 let { g1, g2, g3, g4 } = goods
 
+
+                // 获取折扣
                 let dis = 11 - level
 
                 dis = dis > 1 ? dis : 1
 
                 dis = dis / 10
 
-                if (coins < PRICE[index - 1] * dis) {
-                    return res.sendMsg({
-                        groupId,
-                        msg: '对不起,您的金币不足'
-                    })
-                } else {
+                // 循环购买
 
-                    if (index == 1 && !g1['status']) {
-                        g1['num'] = g1['num'] + 1
-                        g1['status'] = true
-                    } else if (index == 2 && !g2['status']) {
-                        g2['num'] = g2['num'] + 1
-                        g2['status'] = true
-                    } else if (index == 3 && !g3['status']) {
-                        g3['num'] = g3['num'] + 1
-                        g3['status'] = true
-                    } else if (index == 4 && !g4['status']) {
-                        g4['status'] = true
-                        res.sendMsg({
-                            groupId,
-                            imgUrl: '/shop/happy.jpg'
-                        })
-                    } else {
-                        return res.sendMsg({
-                            groupId,
-                            msg: `亲爱的客人,该道具已经售罄了哦`
-                        })
+                let success = [] // 成功列表
+                let noMoney = 0 // 金币不足
+                let wrongName = 0 // 错误名称
+                let soldOut = 0 // 售罄
+                let spend = 0
+                while (goodList.length > 0) {
+                    // 购买列表第一个
+
+                    let { index, name } = goodList.shift()
+
+                    // 非法商品
+                    if (index == 0) {
+                        wrongName++
+                        continue
                     }
 
-                    coins -= PRICE[index - 1] * dis
+                    // 有效商品,金币不足
+                    else if (coins < PRICE[index - 1] * dis) {
+                        noMoney++
+                        continue
+                    } else {
 
+                        if (index == 1 && !g1['status']) {
+                            g1['num'] = g1['num'] + 1
+                            g1['status'] = true
+                            success.push(name)
+                        } else if (index == 2 && !g2['status']) {
+                            g2['num'] = g2['num'] + 1
+                            g2['status'] = true
+                            success.push(name)
+                        } else if (index == 3 && !g3['status']) {
+                            g3['num'] = g3['num'] + 1
+                            g3['status'] = true
+                            success.push(name)
+                        } else if (index == 4 && !g4['status']) {
+                            g4['status'] = true
+                            success.push(name)
+                            res.sendMsg({
+                                groupId,
+                                imgUrl: '/shop/happy.jpg'
+                            })
+                        } else {
+                            soldOut++
+                            continue
+                        }
+                        spend += PRICE[index - 1] * dis
+                        coins -= PRICE[index - 1] * dis
+                    }
                 }
+
 
                 // 写入数据
                 data = {...data, goods, coins }
@@ -133,9 +163,21 @@ module.exports = (req, res) => {
                     }
 
                     if (results.affectedRows == 1) {
+                        // 整理信息
+                        // 成功
+                        let msg = `[CQ:at,qq=${userId}] `;
+
+                        if (success.length > 0) msg = msg + `购买道具${success.join('、')}成功\n总共消费${spend}金币`
+
+                        if (noMoney) msg = msg + `\n由于金币不足,${noMoney}件商品未购买`
+
+                        if (wrongName) msg = msg + `\n${wrongName}件商品名称错误`
+
+                        if (soldOut) msg = msg + `\n${soldOut}件商品已售罄...`
+
                         return res.sendMsg({
                             groupId,
-                            msg: `[CQ:at,qq=${userId}]\n购买道具${goodsNum}成功,扣除${PRICE[index - 1] * dis}金币`
+                            msg
                         })
                     }
                 })
@@ -153,7 +195,7 @@ module.exports = (req, res) => {
     } else {
         return res.sendMsg({
             groupId,
-            msg: '请输入正确的道具序号或名称'
+            msg: '请先告诉智乃您要购买的道具名称吧,多件商品请用空格分隔'
         })
     }
 }

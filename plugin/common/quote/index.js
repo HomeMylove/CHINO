@@ -17,3 +17,7 @@ module.exports = (req, res, next) => {
 
     next()
 }
+
+module.exports.__help = [
+    ['群语录', '群语录']
+]

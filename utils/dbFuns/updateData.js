@@ -15,7 +15,7 @@ module.exports = (tableName, userObj, newData) => {
     return new Promise((resove, reject) => {
         db.query(sqlStr, [newData, user_id, group_id], (err, results) => {
             if (err) reject(err)
-            if (results.affectedRows == 1) {
+            if (results && results.affectedRows == 1) {
                 resove(results)
             } else {
                 reject('失败')

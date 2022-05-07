@@ -21,6 +21,7 @@ module.exports.replyStartWithName = {
     '不可爱': { imgUrl: 'mc/bangbang.jpg' },
     '明天见': { imgUrl: 'mc/ok.jpg' },
     '你是我的狗': { imgUrl: 'mc/chinmoku.jpg' },
+    '坏': { record: 'music/sorry.mp3' },
 
     '你是谁': { msg: `我叫香风智乃
     你们可以叫我智乃，小智乃，哪怕你们叫我智乃酱我也能接受！
@@ -37,5 +38,15 @@ module.exports.replyStartWithNone = {
     '让可莉告诉你吧': { imgUrl: 'BQB/kleedk.jpg' },
     '好不好嘛': { imgUrl: 'BQB/hbhm.gif' },
     '来份色图': { imgUrl: 'BQB/sp.jpg' },
-    '欢迎新人': { imgUrl: 'BQB/welcome.gif' }
+    '欢迎新人': { imgUrl: 'BQB/welcome.gif' },
+    '眼镜蛇': [{ record: 'music/yanjingshe.mp3' }, { record: 'music/henshin.mp3' }],
+    '蝙蝠': { record: 'music/bianfu.mp3' },
+    '大聪明': { record: 'music/build.mp3' },
+    '墓志铭': { record: 'music/muzhiming.mp3' },
+    '火山暴龙': { record: 'music/huoshanjp.mp3' },
+    '穿山甲': { record: 'music/chuanshanjia.mp3' },
+    '破壳暴龙': [{ record: 'music/pokezn.mp3' }, { record: 'music/pokejp.mp3' }],
+    '丘丘谣': [{ record: 'music/qiuqiuzn.mp3' }, { record: 'music/qiuqiujp.mp3' }],
+    '晒太阳': [{ record: 'music/shaitaiyangzn.mp3' }, { record: 'music/shaitaiyangjp.mp3' }],
+    '喵帕斯': [{ record: 'music/miao.mp3' }],
 }

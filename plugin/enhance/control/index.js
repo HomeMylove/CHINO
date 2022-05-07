@@ -1,47 +1,57 @@
 const config = require('../../../config')
-const sleep = require('./sleep')
-const judge = require('./judge')
-
-// 闭嘴群组
-let sleepList = []
-
-// 是否初次加载
-let flag = true
 
 /**
- * @function 控制智乃闭嘴与说话
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
+ * @function 返回一个控制中间件
+ * @param {object} options 
+ * @param {Array} options.order 命令数组,应该有两个元素
+ * @param {Array} options.reply 回复数组，应该有两个元素
  * @returns 
  */
-module.exports = async(req, res, next) => {
+module.exports = (options) => {
+    let { order, reply } = options || {}
+    if (!(order && reply)) return (req, res, next) => next()
+        // 闭嘴群组
+    let sleepList = []
 
-    const { groupId, userId, rawMsg } = req
+    /**
+     * @function 控制智乃闭嘴与说话
+     * @param {*} req 
+     * @param {*} res 
+     * @param {*} next 
+     * @returns 
+     */
+    async function inner(req, res, next) {
+        const { groupId, userId, rawMsg } = req
 
-    if (flag) {
-        try {
-            sleepList = await judge()
-            flag = false
-        } catch (error) {
-            console.log(error, 'control');
-        }
-    }
+        if (userId == config.SUPERUSER) {
+            if (rawMsg == `${config.robotName}${order[0]}`) {
 
-    if (userId == config.SUPERUSER) {
-        if (rawMsg == `${config.robotName}闭嘴` || rawMsg == `${config.robotName}说话`) {
-            try {
-                await sleep(req, res)
-                sleepList = await judge()
-                return
-            } catch (error) {
-                console.log(error, 'control');
+                if (sleepList.indexOf(groupId) == -1) {
+                    sleepList.push(groupId)
+
+                    return res.sendMsg({
+                        groupId,
+                        msg: `${config.robotName}` + reply[0]
+                    })
+                }
+            } else if (rawMsg == `${config.robotName}${order[1]}`) {
+
+                if ((index = sleepList.indexOf(groupId)) != -1) {
+                    sleepList.splice(index, 1)
+
+                    return res.sendMsg({
+                        groupId,
+                        msg: `${config.robotName}` + reply[1]
+                    })
+                }
             }
         }
+
+        if (sleepList.indexOf(groupId) != -1) {
+            return
+        }
+        next()
     }
 
-    if (sleepList.indexOf(groupId.toString()) !== -1) {
-        return
-    }
-    next()
+    return inner
 }

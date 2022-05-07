@@ -8,14 +8,10 @@ const { replyStartWithName, replyStartWithNone } = require('./reply')
  * @returns 
  */
 module.exports = (req, res, next) => {
-
     const { groupId, rawMsg } = req
-
     const nick = res.getNickName(rawMsg)
-
     if (nick) {
         const word = rawMsg.replace(nick, '').trim()
-
         for (let key in replyStartWithName) {
             if (word == key) {
                 return res.sendMsg({
@@ -28,6 +24,12 @@ module.exports = (req, res, next) => {
         const word = rawMsg.trim()
         for (let key in replyStartWithNone) {
             if (word == key) {
+                if (replyStartWithNone[key] instanceof Array) {
+                    return res.sendMsg({
+                        groupId,
+                        ...res.getRandomReply(replyStartWithNone[key])
+                    })
+                }
                 return res.sendMsg({
                     groupId,
                     ...replyStartWithNone[key]

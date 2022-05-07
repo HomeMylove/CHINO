@@ -11,15 +11,11 @@ const { robotName } = require('../../../config')
  * @returns 
  */
 module.exports = (req, res, next) => {
-    let { rawMsg } = req
-
+    let { rawMsg, groupId } = req
     let nick = res.getNickName(rawMsg)
-
     if (nick) {
         rawMsg = rawMsg.replace(nick, '').trim()
-
         if (rawMsg.indexOf(`以后叫我`) === 0) {
-
             req['rawMsg'] = rawMsg
             return rememberMyName(req, res)
 

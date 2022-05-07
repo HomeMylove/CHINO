@@ -24,7 +24,7 @@ function signIn(req, res) {
                     const rawData = {
                             exp: 0, // 经验
                             level: 1, // 等级
-                            coins: 0, // 硬币
+                            coins: 400, // 硬币
                             checkInStatus: false, // 签到状态
                             checkInDays: 0, // 连续天数
                             notCheckInDays: 0, // 未签到天数 
@@ -66,7 +66,7 @@ function signIn(req, res) {
                 rawData = {
                     exp: 0, // 经验
                     level: 1, // 等级
-                    coins: 0, // 硬币
+                    coins: 400, // 硬币
                     checkInStatus: false, // 签到状态
                     checkInDays: 0, // 连续天数
                     notCheckInDays: 0, // 未签到天数
@@ -102,6 +102,8 @@ function signIn(req, res) {
                 }
             })
         }
+    }).catch(error => {
+        console.log('signinWrong', error);
     })
 
 

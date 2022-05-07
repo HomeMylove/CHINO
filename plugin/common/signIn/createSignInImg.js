@@ -31,7 +31,7 @@ async function createSignInImg(userInfo) {
         groupId,
         nickname,
         data,
-        flags
+        flags,
     } = userInfo
 
     // 定义画布的大小
@@ -42,9 +42,11 @@ async function createSignInImg(userInfo) {
     const { greeting, date } = judgeTime()
 
     // 定义绘制的数据
-    const { exp, level, checkInDays, fortune, coins } = data
+    const { exp, level, checkInDays, fortune, coins, notCheckInDays } = data
 
     const { checkIn, double } = flags
+
+    const day = checkInDays + '天' + (notCheckInDays == 1 ? '(可补签)' : '')
 
     let result
     if (checkIn) {
@@ -135,7 +137,7 @@ async function createSignInImg(userInfo) {
         <text x="10%" y="228"  class="title" >${greeting}</text>
         <text x="65%" y="228"  class="title" >${date}</text>
         <text x="10%" y="342"  class="content" >@${nickname} ${result}</text>
-        <text x="10%" y="448"  class="content" >已连续签到${checkInDays}天</text>
+        <text x="10%" y="448"  class="content" >已连续签到${day}</text>
         <text x="10%" y="554"  class="content" >当前金币${coins}</text>
         <text x="10%" y="660"  class="content" >LEVEL:${level}</text>
 

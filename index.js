@@ -1,7 +1,4 @@
-const Robot = require('./app')
-
-const robot = new Robot()
-
+const robot = require('./app')
 
 // 定时任务
 const broadcast = require('./plugin/enhance/broadcast/index')
@@ -11,13 +8,11 @@ reset()
 
 
 // 全局函数
-const { sendMsg, getNickName, getRandomReply } = require('./utils/global/index')
+const { sendMsg, getNickName, getRandomReply, getUserName } = require('./utils/global/index')
 robot.common('sendMsg', sendMsg)
-
-
-
 robot.common('getNickName', getNickName)
 robot.common('getRandomReply', getRandomReply)
+robot.common('getUserName', getUserName)
 
 // 数据库函数
 const { selectData, insertData, updateData } = require('./utils/dbFuns/index')
@@ -28,23 +23,34 @@ robot.common('updateData', updateData)
 
 // 引入插件
 const plugins = require('./plugin/index')
-robot.method(plugins.poke)
+robot.method(plugins.control({ order: ['能不能闭嘴', '可以说话了'], reply: ['这就闭嘴', '复活啦！！！'] }))
+
+robot.method(plugins.poke) // 戳一戳
+robot.method(plugins.judgeName) //
+robot.method(plugins.getHelp) // 帮助
 robot.method(plugins.signIn) // 签到
-robot.method(plugins.shop)
-robot.method(plugins.judgeName)
-robot.method(plugins.reply)
+robot.method(plugins.shop) // 商店
+robot.method(plugins.reply) // 固定回复
 
+robot.method(plugins.control({ order: ['闭嘴', '说话'], reply: ['闭嘴啦', '复活啦！！！'] }))
 
-robot.method(plugins.control)
+robot.method(plugins.quote) // 群语录
 
-robot.method(plugins.quote)
-robot.method(plugins.genshin)
+robot.method(plugins.genshinWish)
+robot.method(plugins.genshinInfo)
+
 robot.method(plugins.diceGame) // 骰子
 robot.method(plugins.callName) // 记住我
-robot.method(plugins.randomAPI)
+robot.method(plugins.randomAPI, { permitted: [] })
 robot.method(plugins.echo)
+robot.method(plugins.getWife, { permitted: [] })
+
+// 测试中间件
+// const test = require('./testMiddleware')
+// robot.app.use(test)
 
 robot.method(plugins.repeater)
+robot.method(plugins.autoChat)
 
 // 开启监听
 robot.listen(5701, () => {

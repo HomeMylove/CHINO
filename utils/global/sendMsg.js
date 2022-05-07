@@ -7,14 +7,16 @@ const { sendPrivateMsg, sendGroupMsg } = require('../../api/requests')
  * @param {int} msgContent.groupId 发送到群组
  * @param {int} msgContent.userId 发送给好友
  * @param {string} msgContent.msg 信息主体
+ * @param {string} msgContent.record 语音文件
  * @param {string} msgContent.imgUrl 图片url，多张图片请在写在msg中
  */
 module.exports = async(msgContent) => {
 
-    let { groupId, userId, msg, imgUrl } = msgContent
+    let { groupId, userId, msg, imgUrl, record } = msgContent
 
     msg = msg || ''
     if (imgUrl) msg = msg + `[CQ:image,file=${imgUrl}]`
+    if (record) msg = `[CQ:record,file=${record}]`
     const rMsg = msg
     msg = encodeURI(msg)
 
@@ -31,5 +33,5 @@ module.exports = async(msgContent) => {
     } else {
         return
     }
-    console.log(result.status, rMsg);
+    console.log(result.status, groupId, rMsg);
 }

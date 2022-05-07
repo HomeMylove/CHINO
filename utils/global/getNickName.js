@@ -15,12 +15,9 @@ module.exports = rawMsg => {
 
         let item = nickNames[i]
 
-        if (rawMsg.indexOf(item) == 0 && item.length >= name.length) {
-
+        if (rawMsg.toLowerCase().indexOf(item) == 0 && item.length >= name.length) {
             name = item
-
         }
-
     }
 
     return name

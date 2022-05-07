@@ -10,17 +10,14 @@ const { db } = require('../../../db/createDB')
 module.exports = (req, res) => {
 
     const { rawMsg, groupId, userId } = req
-
-    const reg = /id=(\d+)/
-
+    const reg = /\d+/
     let id
-
     try {
-        id = rawMsg.match(reg)[1]
+        id = rawMsg.match(reg)[0]
     } catch {
         return res.sendMsg({
             groupId,
-            msg: '格式错误 正确格式\nupdete id=123'
+            msg: '格式错误 正确格式\ndelete 123'
         })
     }
 

@@ -1,23 +1,19 @@
 const config = require('../../../config')
-
 const tableName = 'qq_robot'
-
-/**
- * @function 记住一个名字
- * @param {*} req 
- * @param {*} res 
- * @returns 
- */
+const reply = require('./reply')
+    /**
+     * @function 记住一个名字
+     * @param {*} req 
+     * @param {*} res 
+     * @returns 
+     */
 module.exports = (req, res) => {
-
     const { rawMsg, groupId, userId } = req
-
     let name = rawMsg.replace(`以后叫我`, '').trim()
-
     if (name.length >= 40) {
         return res.sendMsg({
             groupId,
-            msg: '这么长智乃这么记得住嘛'
+            msg: res.getRandomReply(reply['longName'])
         })
     }
 
@@ -37,7 +33,6 @@ module.exports = (req, res) => {
             imgUrl: 'chino/okoru.jpg'
         })
     }
-
 
     // 正常情况
     const user = {
@@ -59,7 +54,7 @@ module.exports = (req, res) => {
                     if (name.length <= 3) {
                         name = [...name].join('~') + '~'
                     }
-                    const msg = `${config.robotName}记住了，以后我就叫你${name}啦`
+                    const msg = res.getRandomReply(reply['rememberd']).replace('$name', name)
                     return res.sendMsg({
                         groupId,
                         msg
@@ -78,7 +73,7 @@ module.exports = (req, res) => {
                     if (name.length <= 3) {
                         name = [...name].join('~') + '~'
                     }
-                    const msg = `${config.robotName}记住了，以后我就叫你${name}啦`
+                    const msg = res.getRandomReply(reply['rememberd']).replace('$name', name)
                     return res.sendMsg({
                         groupId,
                         msg
@@ -86,6 +81,8 @@ module.exports = (req, res) => {
                 }
             })
         }
+    }).catch((error) => {
+        console.log('remenberNameWrong', error);
     })
 
 }

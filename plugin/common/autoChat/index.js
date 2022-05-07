@@ -1,21 +1,25 @@
-const { autoChat } = require('./autoChat')
+const autoChat = require('./autoChat')
 const { robotName } = require('../../../config')
 
-const stauts = false
-
+/**
+ * @function 自动回复
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
 module.exports = (req, res, next) => {
-    let body = req['body']
-    let groupId = body['group_id']
-    if (!stauts) {
-        return res.sendMsg({
-            groupId,
-            msg: '本群未开启该功能'
-        })
+
+    let { rawMsg } = req
+    if (rawMsg.indexOf('智乃') == 0) {
+        req['rawMsg'] = rawMsg.replace(/智乃/, '')
+        const test = rawMsg.match(/[入爹爸爷叠碟]/g)
+        if (test) return
+        autoChat(req, res)
     }
-    autoChat(body, res)
+
     next()
 }
 
 module.exports.__help = [
-    ['对话', `${robotName}+任意语句`, stauts]
+    ['对话', `${robotName}+任意语句`]
 ]

@@ -12,24 +12,31 @@ module.exports = (req, res) => {
 
     const { rawMsg, groupId, userId } = req
 
-    const reg1 = /id=(\d+)/
-    const reg2 = /\s+(.*?)\s+/
+    let str = rawMsg.replace('update', '')
+
+    const reg1 = /\d+/
+    const reg2 = /\s+(.*?)\s+/g
 
     let id, question, answer
 
     try {
-        let results = rawMsg.match(reg1)
+        const result1 = str.match(reg1)
+        id = result1[0]
+        str = str.replace(id, '')
 
-        id = results[1]
+        const result2 = str.match(reg2)
+        question = result2[0].trim()
 
-        question = rawMsg.replace(results[0], '').match(reg2)[1]
+        console.log(id);
+        console.log(question);
 
-        answer = rawMsg.replace('update', '').replace(results[0], '').replace(question, '').trim()
+        answer = str.replace(question, '').trim()
+        console.log(answer);
 
     } catch {
         return res.sendMsg({
             groupId,
-            msg: '格式错误'
+            msg: '格式错误,正确格式 updete 123 Hello? Hi!'
         })
     }
 

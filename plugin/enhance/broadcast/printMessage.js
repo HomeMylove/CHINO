@@ -40,9 +40,11 @@ module.exports = () => {
     const christmas = new Date(2022, 11, 25)
     const newYear = new Date(2023, 0, 1)
     const springFestival = new Date(2023, 0, 22)
-    const eventWish = new Date(2022, 2, 29, 14, 59, 59)
+    const eventWish = new Date(2022, 3, 19, 17, 59, 59)
+    const collegeTest = new Date(2022, 5, 7, 9, 0, 0)
 
-    words.push(`距离雷神/心海卡池结束${countDays(eventWish)}`)
+    words.push(`距离0人/温蒂卡池结束${countDays(eventWish)}`)
+    words.push(`距离高考${countDays(collegeTest)}`)
     words.push(`距离元旦假期${countDays(newYear)}`)
     words.push(`距离春节假期${countDays(springFestival)}`)
     words.push(`距离清明假期${countDays(qingMing)}`)

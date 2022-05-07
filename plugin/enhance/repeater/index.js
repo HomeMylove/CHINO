@@ -8,7 +8,7 @@ const REPEAT_TIME = 2
 const PAUSE_TIME = 4
 
 // 不打断的群聊
-const DONT_PAUSE = ['797991867']
+const DONT_PAUSE = []
 
 // 报数的次数
 const COUNT_TIME = 3
@@ -22,7 +22,6 @@ const COUNT_TIME = 3
  * @returns 
  */
 module.exports = (req, res, next) => {
-
     const { rawMsg, groupId } = req
 
     // 在消息列表中添加群组
@@ -64,6 +63,16 @@ module.exports = (req, res, next) => {
             }
 
         }
+        // 变长
+        else if (rawMsg.length >= 2 && rawMsg.length <= 8 && duplicate(rawMsg)) {
+
+            return next()
+
+            return res.sendMsg({
+                groupId,
+                msg: rawMsg + duplicate(rawMsg)
+            })
+        }
         // 报数
         else if (MESSAGE[groupId]['rawMsg'] == rawMsg * 1 - 1) {
             if (MESSAGE[groupId]['num'] > COUNT_TIME) {
@@ -97,4 +106,16 @@ module.exports = (req, res, next) => {
         }
     }
     next()
+}
+
+// 数组去重
+const duplicate = (str) => {
+    const arr = str.split('').filter(x => x)
+    while (arr.length > 1) {
+        const first = arr.shift()
+        if (arr.indexOf(first) == -1) {
+            return
+        }
+    }
+    return arr[0]
 }

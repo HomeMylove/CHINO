@@ -9,7 +9,7 @@ const { getGroupMemberInfo } = require('../../../api/requests')
 let CHEATING = true
 
 // 作弊则注释掉下一行
-CHEATING = false
+//CHEATING = false
 
 const CHEATING_POINT = 999
 
@@ -122,29 +122,34 @@ module.exports = async(req, res) => {
         }
 
     } else {
-        let response
+        let response, nickname2
         try {
             response = await getGroupMemberInfo(groupId, parseInt(player))
+            if (response.status == 200) {
+                const data = response['data']['data']
+                nickname2 = data['card'] || data['nickname']
+            }
         } catch (error) {
+            console.log('diceGame', error);
             return res.sendMsg({
                 groupId,
                 msg: "失败"
             })
         }
 
-        const nickname2 = response['card'] || response['nickname']
-            // 产生随机点数
+
+        // 产生随机点数
         const number1 = Math.ceil(Math.random() * 6)
         const number2 = Math.ceil(Math.random() * 6)
 
         if (CHEATING) {
             if (player == config.SUPERUSER) {
-                let msg = `[CQ:at,qq=${userId}]\n你掷出了${number1}\n我的主人掷出了${myPoint}\n主人获得了胜利 [CQ:face,id=99]`
+                let msg = `[CQ:at,qq=${userId}]\n你掷出了${number1}\n我的主人掷出了${CHEATING_POINT}\n主人获得了胜利 [CQ:face,id=99]`
                 return res.sendMsg({ groupId, msg })
             }
 
             if (userId == config.SUPERUSER) {
-                let msg = `[CQ:at,qq=${userId}]\n主人你掷出了${myPoint}\n[CQ:at,qq=${player}]你掷出了${number1}\n主人获得了胜利 [CQ:face,id=99]`
+                let msg = `[CQ:at,qq=${userId}]\n主人你掷出了${CHEATING_POINT}\n[CQ:at,qq=${player}]你掷出了${number1}\n主人获得了胜利 [CQ:face,id=99]`
                 return res.sendMsg({ groupId, msg })
             }
         }

@@ -1,37 +1,51 @@
-const axios = require('axios')
+const { reqAutoChat } = require('../../../api/requests')
+const { reqRuyiAi } = require('../../../api/requests')
 
+/**
+ * @function 随机回复
+ * @param {*} req
+ * @param {*} res 
+ */
+module.exports = async(req, res) => {
 
-module.exports.autoChat = (body, res) => {
+    let { groupId, rawMsg, userId } = req
 
-    let rawMsg = body['raw_message']
-
-    const groupId = body['group_id']
-
+    console.log('autoChat msg========\n', rawMsg);
     // 请求api
     rawMsg = encodeURI(rawMsg)
-    axios.get(`http://api.qingyunke.com/api.php?key=free&appid=0&msg=${rawMsg}`).then(response => {
 
-        // 成功
-        let msg = response['data']['content']
+    try {
+        // const result1 = await reqRuyiAi(rawMsg, groupId + "" + userId)
 
-        // 替换 {br} 为换行符
-        msg = msg.replace(/\{br\}/g, '\n').replace(/菲菲/g, '智乃')
+        // if (result1.status == 200) {
+        //     const { data } = result1
+        //     const { outputs } = data['result']['intents'][0]
+        //     for (let i = 0; i < outputs.length; i++) {
+        //         let item = outputs[i]
+        //         if (item['type'] == 'dialog') {
+        //             return res.sendMsg({
+        //                 msg: item['property']['text'],
+        //                 groupId
+        //             })
+        //         }
+        //     }
+        // }
 
-        let reg = /\{face:([0-9]+)\}/
-        const result = msg.match(reg)
+        const qingyun = await reqAutoChat(rawMsg)
 
-        if (result) msg = msg.replace(reg, `[CQ:face,id=${result[1]}]`)
+        if (qingyun.status == 200) {
+            const { data } = qingyun
+            return res.sendMsg({
+                groupId,
+                msg: data.content
+            })
+        }
 
-        res.sendMsg({
+    } catch (error) {
+        console.log(error);
+        return res.sendMsg({
             groupId,
-            msg
+            msg: '你说的话好深奥啊，好像哥德巴赫猜想'
         })
-    }).catch(error => {
-        console.error(error);
-        res.sendMsg({
-            groupId,
-            msg: '没听懂你在说什么'
-        })
-    })
-
+    }
 }

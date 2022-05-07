@@ -13,7 +13,6 @@ module.exports = (req, res) => {
 
     if (rawMsg == 'show') {
         const sqlStr = 'SELECT * FROM echo WHERE user_id=? AND group_id=?'
-
         db.query(sqlStr, [userId, groupId], (err, results) => {
             if (err) {
                 return res.sendMsg({
@@ -45,9 +44,9 @@ module.exports = (req, res) => {
         if (userId != SUPERUSER) {
             return
         }
-        const question = rawMsg.replace('show', '').trim()
+        const question = "%" + rawMsg.replace('show', '').trim() + "%"
 
-        const sqlStr = 'SELECT * FROM echo WHERE group_id=? AND question=?'
+        const sqlStr = 'SELECT * FROM echo WHERE group_id=? AND question like ?'
 
         db.query(sqlStr, [groupId, question], (err, results) => {
             if (err) {
