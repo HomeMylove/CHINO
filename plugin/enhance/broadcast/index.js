@@ -2,7 +2,9 @@ const schedule = require('node-schedule')
 const { sendGroupMsg } = require('../../../api/requests')
 const printMessage = require('./printMessage')
 
-const groupList = []
+const groupList = [
+
+]
 const time = 12 // 每日12点
 
 /**

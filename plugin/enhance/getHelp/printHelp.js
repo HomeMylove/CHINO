@@ -7,9 +7,7 @@ const config = require('../../../config')
  */
 module.exports = (req, res) => {
     const { rawMsg, groupId, HELP } = req
-    if (rawMsg) {
-        return
-    }
+
     const words = []
     words.push(`${config.robotName}可以实现以下功能:`)
 
@@ -47,6 +45,10 @@ module.exports = (req, res) => {
         }
 
         words.push(wordList.join('\n'))
+    }
+
+    if (rawMsg) {
+        return
     }
 
 
