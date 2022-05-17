@@ -54,7 +54,7 @@ module.exports = (req, res) => {
                     if (name.length <= 3) {
                         name = [...name].join('~') + '~'
                     }
-                    const msg = res.getRandomReply(reply['rememberd']).replace('$name', name)
+                    const msg = res.getRandomReply(reply['rememberd']).replace(/\$name/g, name)
                     return res.sendMsg({
                         groupId,
                         msg
@@ -73,7 +73,7 @@ module.exports = (req, res) => {
                     if (name.length <= 3) {
                         name = [...name].join('~') + '~'
                     }
-                    const msg = res.getRandomReply(reply['rememberd']).replace('$name', name)
+                    const msg = res.getRandomReply(reply['rememberd']).replace(/\$name/g, name)
                     return res.sendMsg({
                         groupId,
                         msg

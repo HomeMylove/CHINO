@@ -1,4 +1,3 @@
-// const autoChat = require('./autoChat/index')
 const callName = require('./common/callName/index')
 const diceGame = require('./common/diceGame/index')
 const signIn = require('./common/signIn/index')
@@ -9,6 +8,7 @@ const shop = require('./common/shop/index')
 const quote = require('./common/quote/index')
 const autoChat = require('./common/autoChat/index')
 const getWife = require('./common/getWife/index')
+const luxunSay = require('./common/luxunSay/index')
 
 const control = require('./enhance/control/index')
 const judgeName = require('./enhance/judgeName/index')
@@ -29,6 +29,7 @@ module.exports = {
     shop,
     autoChat,
     getWife,
+    luxunSay,
 
     control,
     repeater,

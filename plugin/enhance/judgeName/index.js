@@ -40,7 +40,7 @@ module.exports = async(req, res, next) => {
             return res.sendMsg({
                 groupId,
                 imgUrl: 'mc/forgive.jpg',
-                msg: res.getRandomReply(reply['forgive']).replace('$name', name)
+                msg: res.getRandomReply(reply['forgive']).replace(/\$name/g, name)
             })
         }
     }
@@ -54,13 +54,13 @@ module.exports = async(req, res, next) => {
 
         return res.sendMsg({
             groupId,
-            msg: res.getRandomReply(reply['angry']).replace('$name', name)
+            msg: res.getRandomReply(reply['angry']).replace(/\$name/g, name)
         })
     }
 
 
     // 得到首两个字
-    const f2words = rawMsg.substring(0, 2) || ''
+    const f2words = rawMsg.substring(0, 2) || '  '
 
     // 得到首两个字的拼音
     const f2pinyin = pinyin(f2words, { style: pinyin.STYLE_NORMAL }) || [

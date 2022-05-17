@@ -35,6 +35,7 @@ robot.method(plugins.reply) // 固定回复
 robot.method(plugins.control({ order: ['闭嘴', '说话'], reply: ['闭嘴啦', '复活啦！！！'] }))
 
 robot.method(plugins.quote) // 群语录
+robot.method(plugins.luxunSay) // 鲁迅说
 
 robot.method(plugins.genshinWish)
 robot.method(plugins.genshinInfo, )

@@ -1,4 +1,6 @@
 const { replyStartWithName, replyStartWithNone } = require('./reply')
+const anime = require('./anime.json')
+
 
 /**
  * @function 预设回复
@@ -13,13 +15,23 @@ module.exports = (req, res, next) => {
     if (nick) {
         const word = rawMsg.replace(nick, '').trim()
         for (let key in replyStartWithName) {
-            if (word == key) {
+            if (word === key) {
                 return res.sendMsg({
                     groupId,
                     ...replyStartWithName[key]
                 })
             }
         }
+       // 以下是 anime 台词
+        for (let key in anime){
+            if(word === key){
+                return res.sendMsg({
+                    groupId,
+                    msg:res.getRandomReply(anime[key])
+                })
+            }
+        }
+
     } else {
         const word = rawMsg.trim()
         for (let key in replyStartWithNone) {
@@ -38,10 +50,11 @@ module.exports = (req, res, next) => {
         }
     }
 
-    if (rawMsg == 'words') {
+    if (rawMsg === 'words' ) {
         const words = []
+        const words_list = replyStartWithName
 
-        for (let key in replyStartWithName) {
+        for (let key in words_list) {
             words.push(' 智乃' + key)
         }
         words.sort((a, b) => a.length - b.length)

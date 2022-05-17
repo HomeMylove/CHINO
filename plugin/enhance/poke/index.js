@@ -87,7 +87,7 @@ module.exports = async(req, res, next) => {
             }
             return res.sendMsg({
                 groupId,
-                msg: relpy.poke[NOTICE_GROUP[groupId] - 1].replace('$name', name)
+                msg: relpy.poke[NOTICE_GROUP[groupId] - 1].replace(/\$name/g, name)
             })
         } catch (error) {
             console.log('poke', error);
