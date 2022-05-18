@@ -1,16 +1,23 @@
-const { db } = require('../../../db/createDB')
+const {db} = require('../../../db/createDB')
 
 /**
  * @function 使用道具
- * @param {*} req 
- * @param {*} res 
- * @returns 
+ * @param {*} req
+ * @param {*} res
+ * @returns
  */
 module.exports = (req, res) => {
 
-    const { groupId, userId, rawMsg } = req
-
-    const goodsNum = rawMsg.replace('使用道具', '').trim()
+    const {groupId, userId, rawMsg} = req
+    let goodsNum
+    if (rawMsg === '补签')
+        goodsNum = '1'
+     else if (rawMsg === '双倍')
+        goodsNum = '2'
+    else if (rawMsg === '改运' || rawMsg === '改命' || rawMsg === '逆天改命' )
+        goodsNum = '3'
+    else
+        goodsNum = rawMsg.replace('使用道具', '').trim()
 
     let index
 
@@ -72,11 +79,16 @@ module.exports = (req, res) => {
                     })
                 }
 
-                let { goods } = data
+                let {goods} = data
 
-                goods = goods || { g1: { status: false, num: 0 }, g2: { status: false, num: 0 }, g3: { status: false, num: 0 }, g4: { status: false } } // 我的商品
+                goods = goods || {
+                    g1: {status: false, num: 0},
+                    g2: {status: false, num: 0},
+                    g3: {status: false, num: 0},
+                    g4: {status: false}
+                } // 我的商品
 
-                let { g1, g2, g3 } = goods
+                let {g1, g2, g3} = goods
 
                 if (index == 1) {
 
@@ -173,7 +185,7 @@ module.exports = (req, res) => {
                     }
                 }
 
-                data = {...data, goods }
+                data = {...data, goods}
 
                 const newData = {
                     data_json: JSON.stringify(data)
@@ -212,7 +224,7 @@ module.exports = (req, res) => {
 
 function getFortune(num) {
     let luck
-        // 计算运势
+    // 计算运势
     switch (num) {
         case 1:
         case 2:

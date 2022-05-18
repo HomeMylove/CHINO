@@ -32,6 +32,7 @@ async function createSignInImg(userInfo) {
         nickname,
         data,
         flags,
+        flip
     } = userInfo
 
     // 定义画布的大小
@@ -157,26 +158,50 @@ async function createSignInImg(userInfo) {
 
     const imgName = files[Math.floor(Math.random() * files.length)]
 
-    await sharp(path.join(imgPath, `/background/${imgName}`))
-        .resize({
-            width: 1854,
-            height: 1088
-        })
-        .extend({
-            bottom: height,
-            background: {
-                r: 255,
-                g: 255,
-                b: 255,
-                alpha: 1
-            }
-        })
-        .composite([{
-            input: svgBuffer,
-            top: 1088,
-            left: 0
-        }])
-        .toFile(path.join(imgPath, `/temp/${groupId}and${userId}.jpg`))
+    if(!flip){
+        await sharp(path.join(imgPath, `/background/${imgName}`))
+            .resize({
+                width: 1854,
+                height: 1088
+            })
+            .extend({
+                bottom: height,
+                background: {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                    alpha: 1
+                }
+            })
+            .composite([{
+                input: svgBuffer,
+                top: 1088,
+                left: 0
+            }])
+            .toFile(path.join(imgPath, `/temp/${groupId}and${userId}.jpg`))
+    }else {
+        await sharp(path.join(imgPath, `/background/${imgName}`))
+            .resize({
+                width: 1854,
+                height: 1088
+            })
+            .extend({
+                bottom: height,
+                background: {
+                    r: 255,
+                    g: 255,
+                    b: 255,
+                    alpha: 1
+                }
+            })
+            .composite([{
+                input: svgBuffer,
+                top: 1088,
+                left: 0
+            }])
+            .flip()
+            .toFile(path.join(imgPath, `/temp/${groupId}and${userId}.jpg`))
+    }
 
 }
 

@@ -5,7 +5,8 @@ const tableName = 'qq_robot'
 
 function signIn(req, res) {
 
-    const { groupId, userId, sender } = req
+    const { groupId, userId, sender,rawMsg } = req
+    const flip = rawMsg !== '签到'
 
     const nickname = sender['card'] || sender['nickname'] // 对方的昵称
 
@@ -20,7 +21,7 @@ function signIn(req, res) {
             //插入新数据
             res.insertData(tableName, user).then(results => {
 
-                if (results.affectedRows == 1) {
+                if (results.affectedRows === 1) {
                     const rawData = {
                             exp: 0, // 经验
                             level: 1, // 等级
@@ -39,13 +40,14 @@ function signIn(req, res) {
                     }
 
                     res.updateData(tableName, user, newData).then(results => {
-                        if (results.affectedRows == 1) {
+                        if (results.affectedRows === 1) {
                             createSignInImg({
                                 userId,
                                 groupId,
                                 nickname,
                                 data: userInfo,
-                                flags
+                                flags,
+                                flip
                             }).then(() => {
                                 res.sendMsg({
                                     groupId,
@@ -84,13 +86,14 @@ function signIn(req, res) {
             }
 
             res.updateData(tableName, user, newData).then(results => {
-                if (results.affectedRows == 1) {
+                if (results.affectedRows === 1) {
                     createSignInImg({
                         userId,
                         groupId,
                         nickname,
                         data: userInfo,
-                        flags
+                        flags,
+                        flip
                     }).then(() => {
                         res.sendMsg({
                             groupId,

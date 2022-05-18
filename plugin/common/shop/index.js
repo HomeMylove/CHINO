@@ -14,13 +14,13 @@ module.exports = (req, res, next) => {
 
     const { rawMsg } = req
 
-    if (rawMsg == '商店' || rawMsg == 'shop') {
+    if (rawMsg === '商店' || rawMsg === 'shop') {
         return showGoods(req, res)
-    } else if (rawMsg.indexOf('购买道具') == 0) {
+    } else if (rawMsg.indexOf('购买道具') === 0) {
         return buyGoods(req, res)
-    } else if (rawMsg == '我的道具') {
+    } else if (rawMsg === '我的道具') {
         return myGoods(req, res)
-    } else if (rawMsg.indexOf('使用道具') == 0) {
+    } else if (rawMsg.indexOf('使用道具') === 0 || rawMsg === '补签' ||rawMsg === '双倍' || rawMsg === '改运' ||rawMsg === '改命' || rawMsg === '逆天改命') {
         return useGoods(req, res)
     }
 

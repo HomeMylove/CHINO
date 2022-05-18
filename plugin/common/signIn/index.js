@@ -12,7 +12,7 @@ module.exports = (req, res, next) => {
 
     const { rawMsg } = req
 
-    if (rawMsg == '签到') {
+    if (rawMsg === '签到' || rawMsg === '到签') {
         return signIn(req, res)
     }
 
