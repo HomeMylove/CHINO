@@ -1,5 +1,5 @@
 const sharp = require('sharp')
-const { judgeTime } = require('./judgeTime')
+const {judgeTime} = require('./judgeTime')
 const path = require('path')
 const fs = require('fs')
 
@@ -40,12 +40,12 @@ async function createSignInImg(userInfo) {
     const height = 1100
 
     // 定义时间和问候语
-    const { greeting, date } = judgeTime()
+    const {greeting, date} = judgeTime()
 
     // 定义绘制的数据
-    const { exp, level, checkInDays, fortune, coins, notCheckInDays } = data
+    const {exp, level, checkInDays, fortune, coins, notCheckInDays} = data
 
-    const { checkIn, double } = flags
+    const {checkIn, double} = flags
 
     const day = checkInDays + '天' + (notCheckInDays == 1 ? '(可补签)' : '')
 
@@ -55,9 +55,9 @@ async function createSignInImg(userInfo) {
     } else {
         let add = checkInDays <= 10 ? Math.ceil(checkInDays / 2) : 5
         if (double) {
-            result = `经验+${add}*2 金币+${add*10}`
+            result = `经验+${add}*2 金币+${add * 10}`
         } else {
-            result = `经验+${add} 金币+${add*10}`
+            result = `经验+${add} 金币+${add * 10}`
         }
     }
 
@@ -66,7 +66,7 @@ async function createSignInImg(userInfo) {
 
 
     let luck
-        // 计算运势
+    // 计算运势
     switch (fortune) {
         case 1:
         case 2:
@@ -90,17 +90,26 @@ async function createSignInImg(userInfo) {
             break;
     }
 
-    let star
-    let starList = []
+    let star = ""
+    let fullStar = ""
+    let oneStar = ""
 
-    for (let i = 0; i < fortune; i++) {
-        starList.push('★')
+    if(fortune === 10){
+        fullStar = "★★★★★★★★★★";
+    }else if(fortune === 1){
+        oneStar = "★☆☆☆☆☆☆☆☆☆"
     }
-    for (let i = 0; i < 10 - fortune; i++) {
-        starList.push('☆')
-    }
+    else {
+        let starList = []
+        for (let i = 0; i < fortune; i++) {
+            starList.push('★')
+        }
+        for (let i = 0; i < 10 - fortune; i++) {
+            starList.push('☆')
+        }
 
-    star = starList.join('')
+        star = starList.join('')
+    }
 
 
     const svgImage = `
@@ -134,6 +143,12 @@ async function createSignInImg(userInfo) {
             font-weight:400;
             font-family:"SimHei";
         }
+        .fullstar{
+        fill: gold;
+        }
+        .onestar{
+        fill: red;
+        }
         </style>
         <text x="10%" y="228"  class="title" >${greeting}</text>
         <text x="65%" y="228"  class="title" >${date}</text>
@@ -148,6 +163,8 @@ async function createSignInImg(userInfo) {
 
         <text x="10%" y="926" class="luck">今日运势:${luck}</text>
         <text x="10%" y="1026" class="star">${star}</text>
+        <text x="10%" y="1026" class="star fullstar">${fullStar}</text>
+        <text x="10%" y="1026" class="star onestar">${oneStar}</text>
         </svg>
         `
 
@@ -158,7 +175,7 @@ async function createSignInImg(userInfo) {
 
     const imgName = files[Math.floor(Math.random() * files.length)]
 
-    if(!flip){
+    if (!flip) {
         await sharp(path.join(imgPath, `/background/${imgName}`))
             .resize({
                 width: 1854,
@@ -179,7 +196,7 @@ async function createSignInImg(userInfo) {
                 left: 0
             }])
             .toFile(path.join(imgPath, `/temp/${groupId}and${userId}.jpg`))
-    }else {
+    } else {
         await sharp(path.join(imgPath, `/background/${imgName}`))
             .resize({
                 width: 1854,

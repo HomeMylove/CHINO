@@ -22,6 +22,8 @@ module.exports.replyStartWithName = {
     '明天见': { imgUrl: 'mc/ok.jpg' },
     '你是我的狗': { imgUrl: 'mc/chinmoku.jpg' },
     '坏': { record: 'music/sorry.mp3' },
+    '520':{msg:"好啦，知道你是单身狗啦"},
+    '我爱你':{msg:'不介意的话，今天就让智乃陪你吧o(*////▽////*)q'},
 
     '你是谁': { msg: `我叫香风智乃
     你们可以叫我智乃，小智乃，哪怕你们叫我智乃酱我也能接受！
