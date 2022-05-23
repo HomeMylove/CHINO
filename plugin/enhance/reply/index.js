@@ -1,13 +1,14 @@
 const { replyStartWithName, replyStartWithNone } = require('./reply')
+const booleanReply = require('./booleanReply')
 const anime = require('./anime.json')
 
 
 /**
  * @function 预设回复
- * @param {*} res 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ * @param req
+ * @param {*} res
+ * @param {*} next
+ * @returns
  */
 module.exports = (req, res, next) => {
     const { groupId, rawMsg } = req
@@ -52,9 +53,7 @@ module.exports = (req, res, next) => {
 
     if (rawMsg === 'words' ) {
         const words = []
-        const words_list = replyStartWithName
-
-        for (let key in words_list) {
+        for (let key in replyStartWithName) {
             words.push(' 智乃' + key)
         }
         words.sort((a, b) => a.length - b.length)
@@ -64,6 +63,11 @@ module.exports = (req, res, next) => {
             groupId,
             msg: words.join('\n')
         })
+    }
+
+    // 回答 true / false
+    if(booleanReply(req,res)){
+        return
     }
 
     next()
