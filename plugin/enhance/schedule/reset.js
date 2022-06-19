@@ -1,7 +1,6 @@
 const schedule = require('node-schedule');
 const { db } = require('../../../db/createDB')
 
-
 const reset = () => {
     `
     * * * * * *
@@ -15,10 +14,8 @@ const reset = () => {
     └───────────────────────── second (0 - 59, OPTIONAL)
     `
     schedule.scheduleJob('0 0 0 * * *', () => {
-
         // 如果未签到，签到天数改为0
         const sqlStr1 = "UPDATE qq_robot SET data_json = JSON_SET(data_json, '$.checkInDays',0,'$.notCheckInDays',(json_extract(data_json, '$.notCheckInDays') + 1)) WHERE data_json->'$.checkInStatus'=false"
-
         // 如果签到，将未签到天数改为0
         const sqlStr2 = "UPDATE qq_robot SET data_json = JSON_SET(data_json, '$.notCheckInDays',0) WHERE data_json->'$.checkInStatus'=true"
             // 将最高记录归零

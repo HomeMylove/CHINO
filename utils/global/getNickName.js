@@ -1,25 +1,19 @@
-const { robotName, robotNicknames } = require('../../config')
+const {robotName, robotNicknames} = require('../../config')
 
 const nickNames = [robotName, ...robotNicknames]
 
 /**
- * @function 获取语句中的起始名字
- * @param {String} rawMsg 原始语句
- * @returns name 最匹配的名字
+ * @function Gets the start name of the statement
+ * @param rawMsg {string} Raw message
+ * @returns name The best name
  */
 module.exports = rawMsg => {
-
     let name = ''
-
     for (let i = 0; i < nickNames.length; i++) {
-
         let item = nickNames[i]
-
-        if (rawMsg.toLowerCase().indexOf(item) == 0 && item.length >= name.length) {
+        if (rawMsg.toLowerCase().indexOf(item) === 0 && item.length >= name.length) {
             name = item
         }
     }
-
     return name
-
 }

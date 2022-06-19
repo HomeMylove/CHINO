@@ -1,19 +1,21 @@
 const express = require('express')
-    // 解决跨域问题(如果有的话)
+const LinkedList = require('./utils/utils/LinkedList')
 const cors = require('cors')
-
+const {SUPERUSER, robotName} = require("./config");
 const app = express()
+
 app.use(cors())
 app.use(express.json())
-app.use(express.urlencoded({ extended: false }))
+app.use(express.urlencoded({extended: false}))
 
 class Robot {
     constructor() {
         this.app = app
-        this.HELP = [] // 帮助列表
+        this.HELP = []
         this.app.use((req, res, next) => {
             const body = req['body']
 
+            // Map the keys on body to req and rename them
             req['groupId'] = body['group_id']
             req['rawMsg'] = body['raw_message']
             req['msgId'] = body['message_id']
@@ -28,26 +30,18 @@ class Robot {
             req['noticeType'] = body['notice_type']
             req['targetId'] = body['target_id']
             req['senderId'] = body['sender_id']
-
             req['HELP'] = this.HELP
-
-            res.send('ok') // 返回以阻止多次上报
-
-            if (!req['groupId']) {
-                return
-            }
-
-            if (req['msgType'] || req['noticeType']) {
-                next()
-            }
+            res.send('ok')  // Return OK to prevent multiple reporting
+            if (!req['groupId']) return // If there is no groupId, it should not continue
+            if (req['msgType'] || req['noticeType']) next() // Next only if it has msgType or noticeType
         })
     }
 
-
     /**
-     * @method 在res上绑定一般函数
-     * @param {String} 函数名
-     * @param {Function} 函数
+     * The function body should be a valid middleware
+     * @method Bind common functions to res
+     * @param funName {String} The function name
+     * @param fun {Object} The function body
      */
     common(funName, fun) {
         this.app.use((req, res, next) => {
@@ -57,53 +51,56 @@ class Robot {
     }
 
 
-
     /**
-     * @method 定义中间件
-     * @param {String} methodName 中间件名
-     * @param {Object} options 参数
-     * @param {Array} options.permitted 允许通过
-     * @param {Array} options.forbidden 禁止通过
-     * @param {Number} options.time 一分钟回复次数
+     * @method Installing a plug-in
+     * @param {function} methodName The plug-in name
+     * @param {{permitted: Array<String>, forbidden: Array<string>, time: Number}|{}} options Options
+     * @param {Array<String>} options.permitted  Groups that are permitted to pass
+     * @param {Array<string>} options.forbidden  Groups that are forbidden to pass
+     * @param {Number} options.time Number of replies in one minute
      */
     method(methodName, options) {
         options = options || {}
-        const { permitted, forbidden } = options
-
+        const {permitted, forbidden} = options
         this.app.use(middle(options))
 
         function middle(options) {
-            const { permitted, forbidden, time } = options
-            const inner = (req, res, next) => {
-                const { groupId } = req
-
-                if (forbidden && forbidden.indexOf(groupId.toString()) != -1) {
-                    next()
-                } else if (permitted && permitted.indexOf(groupId.toString()) == -1) {
-                    next()
-                } else {
+            const banList = new LinkedList();
+            const {permitted, forbidden} = options
+            return (req, res, next) => {
+                const {groupId, userId, rawMsg} = req
+                if (userId.toString() === SUPERUSER) {
+                    if (rawMsg === '关闭' + methodName.__name) {
+                        banList.add(groupId.toString())
+                    }
+                    if (rawMsg === '开启' + robotName.__name) {
+                        banList.del(groupId.toString())
+                    }
+                }
+                if (banList.has(groupId.toString())) return next()
+                if (forbidden?.indexOf(groupId.toString()) !== -1) return next()
+                else if (permitted?.indexOf(groupId.toString()) === -1) return next()
+                else {
                     methodName(req, res, next)
                 }
             }
-            return inner
         }
 
-        //写入帮助
+        // Write help
         if (methodName.__help) {
-            const h = { permitted, forbidden, description: methodName.__help }
+            const h = {permitted, forbidden, description: methodName.__help}
             this.HELP.push(h)
         }
     }
 
     /**
-     * @method 开启监听
-     * @param {Number} post 监听端口
-     * @param {Function} callback 回调
+     * @method Listen
+     * @param post {Number} Post number
+     * @param callback {function}  Callback function
      */
     listen(post, callback) {
         this.app.listen(post, callback)
     }
-
 }
 
 module.exports = new Robot()

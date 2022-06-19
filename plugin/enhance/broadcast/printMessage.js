@@ -1,7 +1,7 @@
 const countDays = require('./countDays')
 
 /**
- * @function 返回msg内容
+ * @function Return a piece of message
  * @returns
  */
 module.exports = () => {
@@ -12,7 +12,7 @@ module.exports = () => {
     const date = time.getDate()
     const weekList = ['日', '一', '二', '三', '四', '五', '六']
     const dayIndex = time.getDay()
-    const day = weekList[dayIndex] // 周几
+    const day = weekList[dayIndex] // Day of week
 
     const first = `今天是${year}年${month}月${date}日 星期${day}`
     words.push(first)
@@ -22,16 +22,16 @@ module.exports = () => {
         case 0:
         case 6:
             today = '今天是周末'
-            break;
+            break
         case 5:
             const h = Math.round(24 - time.getHours())
             today = `现在距离周末还剩${h}小时`
+            break
         default:
             today = `今天距离周末还剩${5-dayIndex}天`
-            break;
+            break
     }
     words.push(today)
-
     const qingMing = new Date(2022, 3, 3)
     const labourDay = new Date(2022, 3, 30)
     const dragonBoat = new Date(2022, 5, 3)

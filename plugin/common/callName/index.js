@@ -35,13 +35,9 @@ module.exports = (req, res, next) => {
         })
     }
 
-
-
-
     next()
 
 }
-
 
 module.exports.__help = [
     ['记住我', `${robotName}以后叫我欧尼酱\n${robotName}我是谁 | ${robotName}你是我的谁 | ${robotName}我是你的谁`]

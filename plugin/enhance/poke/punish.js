@@ -1,7 +1,8 @@
 /**
- * @function 惩罚 会将传入的成员 次数加1
- * @param {*} groupId 
- * @param {*} sender 
+ * @function Increases the number of the member by 1
+ * @param groupId
+ * @param  sender
+ * @param list
  */
 module.exports = (groupId, sender, list) => {
     if (!list[groupId]) {

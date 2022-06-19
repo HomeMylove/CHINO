@@ -1,28 +1,26 @@
-const { db } = require('../../db/createDB')
-const selectData = require('../dbFuns/selectData')
-const { getGroupMemberInfo } = require('../../api/requests')
+const {getGroupMemberInfo} = require('../../api/requests')
+const Dbc = require('../utils/Dbc')
+
 
 /**
- * @function 获取记住的名字
- * @param {*} groupId 
- * @param {*} userId
- * @param {boolean} flag 如果没有name是否要获取信息
- * @returns 
+ * @function Get Group member's name
+ * @param groupId {string}
+ * @param  userId {string}
+ * @param flag {boolean}  Use nickname
+ * @returns
  */
-module.exports = async({ groupId, userId, flag = false }) => {
-    const user = {
-        group_id: groupId,
-        user_id: userId
-    }
+module.exports = async ({groupId, userId, flag = false}) => {
+    const sqlStr = "select name from robot_name where user_id=? and group_id=?"
     try {
-        const result = await selectData('qq_robot', user)
-        if (result.length > 0 && result[0]['name'] && result[0]['name'].trim() != '') {
+        const dbc = new Dbc()
+        const result = await dbc.select(sqlStr,userId,groupId)
+        if (result.length > 0  && result[0]?.['name'].trim() !== '') {
             return result[0]['name']
         } else {
             if (flag) {
                 try {
                     const response = await getGroupMemberInfo(groupId, userId)
-                    if (response.status == 200) {
+                    if (response.status === 200) {
                         const data = response['data']['data']
                         return data['card'] || data['nickname']
                     } else {
@@ -39,5 +37,4 @@ module.exports = async({ groupId, userId, flag = false }) => {
     } catch (error) {
         console.log('getUserName', error);
     }
-
 }

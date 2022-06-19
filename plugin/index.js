@@ -9,6 +9,7 @@ const quote = require('./common/quote/index')
 const autoChat = require('./common/autoChat/index')
 const getWife = require('./common/getWife/index')
 const luxunSay = require('./common/luxunSay/index')
+const djwJoke = require('./common/djwJoke/index')
 
 const control = require('./enhance/control/index')
 const judgeName = require('./enhance/judgeName/index')
@@ -16,6 +17,7 @@ const poke = require('./enhance/poke/index')
 const reply = require('./enhance/reply/index')
 const repeater = require('./enhance/repeater/index')
 const getHelp = require('./enhance/getHelp/index')
+const banPerson = require('./enhance/banPerson/index')
 
 module.exports = {
     signIn,
@@ -30,11 +32,13 @@ module.exports = {
     autoChat,
     getWife,
     luxunSay,
+    djwJoke,
 
     control,
     repeater,
     judgeName,
     poke,
     reply,
-    getHelp
+    getHelp,
+    banPerson,
 }

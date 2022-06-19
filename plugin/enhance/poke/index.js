@@ -1,34 +1,25 @@
-const config = require('../../../config')
-const punnish = require('./punnish')
+const {selfId, SUPERUSER, robotName} = require('../../../config')
+const punish = require('./punish')
 
 const NOTICE_GROUP = {}
-
-// 最大戳数
-const relpy = require('./reply.json')
-
-
-const NOTICE_TIME = relpy.poke.length + 1
-
-
+const reply = require('./reply.json')
+const NOTICE_TIME = reply.poke.length + 1
 const PATIENCE = 3
-const PUNNISH = {}
+const PUNISH = {}
 
 /**
- * @function 对戳一戳作出反应
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
- * @returns 
+ * @function Respond to a poke
+ * @param  req {Object}
+ * @param  res {Object}
+ * @param  next {function}
+ * @returns
  */
-module.exports = async(req, res, next) => {
-    const { rawMsg, groupId, noticeType, targetId, senderId, userId } = req
-
-    //道歉
-    if (rawMsg == '智乃对不起' || rawMsg == '智乃，对不起' || rawMsg == '对不起智乃' || rawMsg == '对不起，智乃') {
-        if (PUNNISH[groupId] && PUNNISH[groupId][userId] > PATIENCE) {
-
-            delete PUNNISH[groupId][userId]
-
+module.exports = async (req, res, next) => {
+    const {rawMsg, groupId, noticeType, targetId, senderId, userId} = req
+    // Apology
+    if (rawMsg === `${robotName}对不起` || rawMsg === `对不起${robotName}`) {
+        if (PUNISH[groupId]?.[userId] > PATIENCE) {
+            delete PUNISH[groupId][userId]
             return res.sendMsg({
                 groupId,
                 imgUrl: 'mc/forgive.jpg',
@@ -38,15 +29,10 @@ module.exports = async(req, res, next) => {
     }
 
     const id = senderId || userId
-
-
-    if (PUNNISH[groupId] && PUNNISH[groupId][id] >= PATIENCE) {
-
-        if (PUNNISH[groupId][id]++ > PATIENCE) {
+    if (PUNISH[groupId]?.[id] >= PATIENCE) {
+        if (PUNISH[groupId][id]++ > PATIENCE) {
             return
         }
-
-
         return res.sendMsg({
             groupId,
             msg: '智乃生气了，不想理你了。。。'
@@ -54,10 +40,8 @@ module.exports = async(req, res, next) => {
     }
 
 
-    if (noticeType == 'notify' && targetId == config.selfId) {
-
-
-        if (senderId == config.SUPERUSER) {
+    if (noticeType === 'notify' && targetId === selfId) {
+        if (senderId === SUPERUSER) {
             return res.sendMsg({
                 groupId,
                 msg: '嘻嘻,主人'
@@ -69,25 +53,23 @@ module.exports = async(req, res, next) => {
         } else {
             NOTICE_GROUP[groupId] = 1
         }
-
-        punnish(groupId, senderId, PUNNISH)
-
-        if (NOTICE_GROUP[groupId] == NOTICE_TIME) {
-            res.sendMsg({
+        punish(groupId, senderId, PUNISH)
+        if (NOTICE_GROUP[groupId] === NOTICE_TIME) {
+            await res.sendMsg({
                 groupId,
-                msg: `[CQ:at,qq=${config.SUPERUSER}]主人...他们欺负我!!!`
+                msg: `[CQ:at,qq=${SUPERUSER}]主人...他们欺负我!!!`
             })
             NOTICE_GROUP[groupId] = 0
             return
         }
         try {
-            const name = await res.getUserName({ groupId, userId: senderId, flag: true })
+            const name = await res.getUserName({groupId, userId: senderId, flag: true})
             if (!name) {
-                throw new Error('no name')
+                return
             }
             return res.sendMsg({
                 groupId,
-                msg: relpy.poke[NOTICE_GROUP[groupId] - 1].replace(/\$name/g, name)
+                msg: reply.poke[NOTICE_GROUP[groupId] - 1].replace(/\$name/g, name)
             })
         } catch (error) {
             console.log('poke', error);

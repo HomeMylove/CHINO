@@ -1,26 +1,21 @@
 const schedule = require('node-schedule')
-const { sendGroupMsg } = require('../../../api/requests')
+const {sendGroupMsg} = require('../../../api/requests')
 const printMessage = require('./printMessage')
 
-const groupList = [
-
-]
-const time = 12 // 每日12点
+const groupList = []
+const time = 12 // The time to send a broadcast
 
 /**
- * @function 广播
+ * @function Broadcast
  */
 module.exports = (t = time) => {
-    schedule.scheduleJob(`0 0 ${t} * * *`, async() => {
-        for (let i = 0; i < groupList.length; i++) {
-            const groupId = groupList[i]
+    schedule.scheduleJob(`0 0 ${t} * * *`, () => {
+        groupList.forEach(async (groupId) => {
             try {
                 await sendGroupMsg(groupId, encodeURI(printMessage()))
             } catch (error) {
                 console.log(error, 'broadcast');
             }
-
-        }
-
+        })
     })
 }
